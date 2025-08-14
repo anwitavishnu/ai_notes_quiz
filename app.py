@@ -1,6 +1,9 @@
 import streamlit as st
 import fitz  # PyMuPDF
 from openai import OpenAI
+import time
+time.sleep(3)  # wait 3 seconds between requests
+
 
 # Load API key from Streamlit secrets
 api_key = st.secrets["OPENAI_API_KEY"]
@@ -33,7 +36,7 @@ def generate_notes(text):
 def generate_quiz(text):
     prompt = f"Create 5 multiple-choice questions with 4 options each (mark the correct option) from the following text:\n\n{text}"
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
     )
     return response.choices[0].message.content.strip()
