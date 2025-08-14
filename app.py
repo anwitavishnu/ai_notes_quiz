@@ -1,19 +1,12 @@
-import os
 import streamlit as st
 import fitz  # PyMuPDF
 from openai import OpenAI
 
-# Get API key from environment variables (for online deployment)
-api_key = os.getenv("OPENAI_API_KEY")
+# Load API key from Streamlit secrets
+api_key = st.secrets["OPENAI_API_KEY"]
 
-# If running locally, allow entering API key manually
-if not api_key:
-    api_key = st.text_input("Enter your OpenAI API Key", type="password")
-
-if api_key:
-    client = OpenAI(api_key=api_key)
-else:
-    client = None
+# Initialize OpenAI client
+client = OpenAI(api_key=api_key)
 
 st.set_page_config(page_title="AI PDF Notes & Quiz Generator", layout="centered")
 st.title("📄 AI PDF Notes & Quiz Generator")
@@ -45,7 +38,7 @@ def generate_quiz(text):
     )
     return response.choices[0].message.content.strip()
 
-if uploaded_file and client:
+if uploaded_file:
     with st.spinner("Extracting text from PDF..."):
         extracted_text = extract_text_from_pdf(uploaded_file)
 
@@ -60,5 +53,4 @@ if uploaded_file and client:
 
     st.subheader("❓ AI-Generated Quiz")
     st.write(quiz)
-elif uploaded_file and not client:
-    st.warning("Please enter your OpenAI API key to proceed.")
+
